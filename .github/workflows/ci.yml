@@ -19,7 +19,7 @@ jobs:
         run: sudo apt-get install -y shellcheck
 
       - name: Run shellcheck
-        run: shellcheck portman
+        run: shellcheck portman.sh
 
   syntax:
     name: Bash syntax check
@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check syntax
-        run: bash -n portman && echo "Syntax OK"
+        run: bash -n portman.sh && echo "Syntax OK"
 
   test:
     name: Smoke test
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Make executable
-        run: chmod +x portman
+        run: chmod +x portman.sh
 
       - name: Version check
         run: ./portman version
