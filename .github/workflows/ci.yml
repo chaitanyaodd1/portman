@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck
+        run: shellcheck portman
+
+  syntax:
+    name: Bash syntax check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check syntax
+        run: bash -n portman && echo "Syntax OK"
+
+  test:
+    name: Smoke test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make executable
+        run: chmod +x portman
+
+      - name: Version check
+        run: ./portman version
+
+      - name: Help runs without error
+        run: ./portman help
+
+      - name: Info lookup
+        run: ./portman info 5432
+
+      - name: Keyword search
+        run: ./portman info postgres
+
+      - name: Check a port
+        run: ./portman check 9999
+
+      - name: Local forward and kill
+        run: |
+          ./portman forward testapp 19999:9999 --type local
+          ./portman status
+          ./portman kill testapp
+          ./portman status
+
+      - name: Kill all on empty state
+        run: ./portman kill all || true
+
+      - name: Clean on empty state
+        run: ./portman clean
